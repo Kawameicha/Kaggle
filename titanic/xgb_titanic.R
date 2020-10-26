@@ -1,10 +1,10 @@
 library(tidyverse)
 library(tidymodels)
 
-setwd("~/Documents/Kaggle/titanic/")
-train <- read_csv('~/Documents/Kaggle/titanic/train.csv') %>% 
+setwd("~/Documents/GitHub/Kaggle/titanic/")
+train <- read_csv('~/Documents/GitHub/Kaggle/titanic/train.csv') %>% 
   mutate(Survived = as.factor(Survived))
-test <- read_csv('~/Documents/Kaggle/titanic/test.csv')
+test <- read_csv('~/Documents/GitHub/Kaggle/titanic/test.csv')
 
 set.seed(42)
 

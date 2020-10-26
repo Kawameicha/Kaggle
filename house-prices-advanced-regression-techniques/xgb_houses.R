@@ -1,10 +1,10 @@
 library(tidyverse)
 library(tidymodels)
 
-setwd("~/Documents/Kaggle/house-prices-advanced-regression-techniques/")
-train <- read.csv('~/Documents/Kaggle/house-prices-advanced-regression-techniques/train.csv') %>% 
+setwd("~/Documents/GitHub/Kaggle/house-prices-advanced-regression-techniques/")
+train <- read.csv('~/Documents/GitHub/Kaggle/house-prices-advanced-regression-techniques/train.csv') %>% 
   filter(!is.na(SalePrice))
-test <- read.csv('~/Documents/Kaggle/house-prices-advanced-regression-techniques/test.csv')
+test <- read.csv('~/Documents/GitHub/Kaggle/house-prices-advanced-regression-techniques/test.csv')
 
 set.seed(42)
 
