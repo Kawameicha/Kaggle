@@ -1,7 +1,7 @@
 kg <<- reticulate::import('kaggle')
 
-setwd("~/Documents/GitHub/Kaggle//")
-compName <- 'tmdb-box-office-prediction'
+setwd("~/Documents/GitHub/Kaggle/")
+compName <- 'competitive-data-science-predict-future-sales'
 
 if(!dir.exists(compName)) {
   dir.create(compName)
