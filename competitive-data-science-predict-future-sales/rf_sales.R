@@ -4,7 +4,7 @@ library(tidymodels)
 setwd("~/Documents/GitHub/Kaggle/competitive-data-science-predict-future-sales/")
 train <- read_csv('~/Documents/GitHub/Kaggle/competitive-data-science-predict-future-sales/sales_train.csv') %>% 
   mutate(item_cnt_day = ifelse(item_cnt_day < 0, 0, item_cnt_day),
-         item_price   = ifelse(item_price < .1, .1, item_price))
+         item_price   = ifelse(item_price < 0, 0, item_price))
 items <- read_csv('~/Documents/GitHub/Kaggle/competitive-data-science-predict-future-sales/items.csv')
 shops <- read_csv('~/Documents/GitHub/Kaggle/competitive-data-science-predict-future-sales/shops.csv')
 valid <- read_csv('~/Documents/GitHub/Kaggle/competitive-data-science-predict-future-sales/test.csv')
@@ -50,7 +50,7 @@ rf_workflow <- workflow() %>%
 
 rf_tune <- rf_workflow %>%
   tune_grid(resamples = folds,
-            grid      = 2, # increase when submitting
+            grid      = 10, # increase when submitting
             metrics   = metric_set(rmse, rsq))
 
 rf_tune %>%
@@ -100,8 +100,7 @@ rf_pred <- rf_model_fin %>%
 valid <- read_csv('~/Documents/GitHub/Kaggle/competitive-data-science-predict-future-sales/test.csv')
 
 submission <- data.frame(ID = valid$ID,
-                         round(rf_pred, digits = 0)) %>% 
-  rename(item_cnt_month = .pred) %>% 
-  mutate(item_cnt_month = ifelse(item_cnt_month > 20, 20, 0))
+                         rf_pred) %>% 
+  rename(item_cnt_month = .pred)
 
 write_csv(submission, 'sales_submission.csv')
