@@ -1,3 +1,9 @@
+valid <- read_csv('~/Documents/GitHub/Kaggle/competitive-data-science-predict-future-sales/test.csv') %>% 
+  mutate(shop_id = ifelse(shop_id == 57, 0, shop_id),
+         shop_id = ifelse(shop_id == 58, 1, shop_id),
+         shop_id = ifelse(shop_id == 11, 10, shop_id),
+         shop_id = ifelse(shop_id == 40, 39, shop_id))
+
 # last 2 months
 valid_month <- train %>% 
   filter(date_block_num %in% c(32, 33)) %>% 

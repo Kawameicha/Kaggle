@@ -1,6 +1,17 @@
 train <- read_csv('~/Documents/GitHub/Kaggle/competitive-data-science-predict-future-sales/sales_train.csv') %>% 
   mutate(item_cnt_day = ifelse(item_cnt_day < 0, 0, item_cnt_day),
-         item_price   = ifelse(item_price < 0, 0, item_price))
+         item_price = ifelse(item_price < 0, 0, item_price),
+         shop_id = ifelse(shop_id == 57, 0, shop_id),
+         shop_id = ifelse(shop_id == 58, 1, shop_id),
+         shop_id = ifelse(shop_id == 11, 10, shop_id),
+         shop_id = ifelse(shop_id == 40, 39, shop_id)) %>%
+  filter(item_cnt_day <= 100000 & item_price <= 1000)
+
+items <- read_csv('~/Documents/GitHub/Kaggle/competitive-data-science-predict-future-sales/items.csv')
+
+shops <- read_csv('~/Documents/GitHub/Kaggle/competitive-data-science-predict-future-sales/shops.csv') %>% 
+  mutate(shop_name = gsub('!', '', shop_name),
+         shop_name = gsub('(\\w)( )(.*)', '\\1', shop_name))
 
 # last 2 months
 train_month <- train %>% 
@@ -37,8 +48,8 @@ train_shops <- train %>%
   summarise(shop_items = n_distinct(item_id), 
             shop_sales = sum(item_cnt_day, na.rm = TRUE),
             shop_perfo = sum(item_price * item_cnt_day, na.rm = TRUE)) %>% 
-  left_join(shops, by = c('shop_id'))  %>% 
-  mutate(shop_name = gsub('(\\w)( )(.*)', '\\1', shop_name))
+  left_join(shops, by = c('shop_id'))#  %>% 
+  # mutate(shop_name = gsub('(\\w)( )(.*)', '\\1', shop_name))
 
 # about cities
 train_city <- train_shops %>% 
@@ -55,12 +66,13 @@ train_items <- train %>%
   left_join(items, by = c('item_id')) %>% 
   select(-item_name)
 
-# untis to pred
+# units to predict
 train_units <- train %>% 
   filter(date_block_num == 33) %>% 
   group_by(shop_id, item_id) %>% 
   summarise(units = sum(item_cnt_day, na.rm = TRUE))
 
+# create train
 train <- train %>% 
   filter(date_block_num == 32) %>%
   select(shop_id, item_id) %>% 
@@ -70,9 +82,12 @@ train <- train %>%
   left_join(train_shops, by = c('shop_id')) %>%
   left_join(train_items, by = c('item_id')) %>%
   left_join(train_city, by = c('shop_name')) %>% 
-  # quick fix, but doesn't make sense
+  # replace 0 and clipping 0, 20
   mutate_if(is.numeric, replace_na, replace = 0) %>% 
-  mutate(units = ifelse(units > 20, 20, units)) # clipping 0, 20
+  mutate(units = ifelse(units > 20, 20, units))
+
+# add sales/item category, city, etc.
+# add new item (sales this year only)
 
 set.seed(42)
 
